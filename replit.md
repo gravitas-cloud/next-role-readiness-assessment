@@ -4,6 +4,17 @@
 
 A lead generation assessment tool for Gravitas Academy that helps Senior IT Leaders (ages 38-50) in India evaluate their readiness for C-suite transitions. The platform delivers a 12-question diagnostic assessment that classifies users into strategic readiness zones and identifies their top development priorities. Users receive instant results and a detailed PDF report via email, followed by nurture campaigns to drive engagement with paid coaching offerings.
 
+## Recent Changes
+
+**October 9, 2025**
+- ✅ Completed JWT authentication system with 7-day token expiration and auto-refresh within 24 hours of expiry
+- ✅ Implemented bcrypt password hashing (10 rounds) with shared Zod validation schemas
+- ✅ Built authentication API routes (register, login, logout, me) with consistent 8-character password requirement
+- ✅ Created useAuth hook for frontend authentication state management
+- ✅ Added protected route system with automatic redirects for unauthenticated users
+- ✅ End-to-end authentication flow tested and verified production-ready
+- ✅ Database schema implemented with users, assessments, and admins tables using Drizzle ORM
+
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
