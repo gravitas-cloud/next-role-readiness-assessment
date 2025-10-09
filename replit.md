@@ -25,6 +25,9 @@ A lead generation assessment tool for Gravitas Academy that helps Senior IT Lead
 - ✅ **Approval Workflow**: Built approval endpoint that updates assessment status and triggers MailerLite subscriber sync
 - ✅ **Admin Seeding**: Created seed script for initial admin user (admin@gravitasacademy.com)
 - ✅ Complete end-to-end test passed: user registration → assessment → admin approval → email integration
+- ✅ **Content Library System**: Implemented JSON-based content library with all 12 questions, zone interpretations, priority definitions, and CTA content
+- ✅ **Enhanced API Endpoints**: Added GET /api/assessment/questions and GET /api/assessments/:id/results with rich content
+- ✅ **MailerLite Groups**: Configured all 4 zone-based groups for automated subscriber segmentation
 
 ## Setup Instructions
 
@@ -122,11 +125,21 @@ Preferred communication style: Simple, everyday language.
 
 **Assessment Scoring Logic**
 - 12-question assessment mapped to three dimensions:
-  - Strategic Identity (max 40 points)
-  - Visibility & Positioning (max 40 points)  
-  - Political Capital (max 40 points)
-- Total score determines zone classification
-- Algorithm identifies top 2 development priorities based on dimension scores
+  - Strategic Identity (max 20 points - questions 1-4)
+  - Visibility & Positioning (max 20 points - questions 5-8)
+  - Political Capital (max 20 points - questions 9-12)
+- Total score (12-60) determines zone classification:
+  - ZONE_1: 12-29 points (Technical Expert)
+  - ZONE_2: 30-44 points (Emerging Strategist)
+  - ZONE_3: 45-54 points (Strategic Contributor)
+  - ZONE_4: 55-60 points (Executive Ready)
+- Algorithm identifies top 2 development priorities based on lowest-scoring dimensions
+
+**Content Library**
+- Single source of truth: `server/content-library/assessment-content.json`
+- Contains: questions, zone interpretations, priority definitions, CTA content
+- Updates require only JSON edits, no code changes
+- Serves content via: GET /api/assessment/questions and GET /api/assessments/:id/results
 
 **Report Generation**
 - PDF generation using PDFKit with professional 2-page layout

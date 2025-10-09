@@ -1,0 +1,669 @@
+{
+  "assessment_content": {
+    "metadata": {
+      "version": "1.0",
+      "assessment_type": "free",
+      "title": "Next Role Readiness - Strategic Readiness Quick Diagnostic",
+      "completion_time_minutes": 15,
+      "total_questions": 12,
+      "max_score": 60,
+      "sections": 3
+    },
+    
+    "opening_content": {
+      "title": "What's Really Blocking Your Next Role?",
+      "introduction": "You've mastered the technical side. You deliver results. You lead teams.\n\nSo why aren't you in that strategic role yet?\n\nThis 12-question diagnostic reveals your Strategic Readiness Zone and the specific gaps between where you are and where you need to be for your next role.\n\nMost senior IT leaders discover they're closer than they think—but stuck on 2-3 specific capabilities they didn't know were holding them back.",
+      "time_estimate": "Time to complete: 12-15 minutes",
+      "value_proposition": "What you'll discover: Your readiness zone, your biggest gaps, and your next move."
+    },
+    
+    "sections": [
+      {
+        "section_id": "strategic_identity",
+        "section_number": 1,
+        "section_title": "Strategic Identity",
+        "section_description": "How you think about and position your role",
+        "max_score": 20,
+        "questions": ["q1", "q2", "q3", "q4"]
+      },
+      {
+        "section_id": "visibility_positioning",
+        "section_number": 2,
+        "section_title": "Visibility & Positioning",
+        "section_description": "How you're perceived by executive stakeholders",
+        "max_score": 20,
+        "questions": ["q5", "q6", "q7", "q8"]
+      },
+      {
+        "section_id": "political_capital",
+        "section_number": 3,
+        "section_title": "Political Capital & Influence",
+        "section_description": "Your relationships and organizational savvy",
+        "max_score": 20,
+        "questions": ["q9", "q10", "q11", "q12"]
+      }
+    ],
+    
+    "questions": [
+      {
+        "id": "q1",
+        "section": "strategic_identity",
+        "order": 1,
+        "text": "When presenting to C-suite executives, I typically:",
+        "options": [
+          {
+            "value": 1,
+            "label": "Focus on technical architecture and implementation details"
+          },
+          {
+            "value": 2,
+            "label": "Report project status, timelines, and resource needs"
+          },
+          {
+            "value": 3,
+            "label": "Highlight capabilities delivered and technical achievements"
+          },
+          {
+            "value": 4,
+            "label": "Lead with business outcomes, ROI, and strategic impact"
+          },
+          {
+            "value": 5,
+            "label": "Frame technology initiatives as enablers of enterprise growth and competitive advantage"
+          }
+        ]
+      },
+      {
+        "id": "q2",
+        "section": "strategic_identity",
+        "order": 2,
+        "text": "I can explain my organization's business model (customer segments, value proposition, revenue streams, competitive advantage) without looking at slides:",
+        "options": [
+          {
+            "value": 1,
+            "label": "Cannot do this / Would struggle significantly"
+          },
+          {
+            "value": 2,
+            "label": "Could provide a basic technical description"
+          },
+          {
+            "value": 3,
+            "label": "Can do it with some preparation and prompting"
+          },
+          {
+            "value": 4,
+            "label": "Can do it fairly well with business context"
+          },
+          {
+            "value": 5,
+            "label": "Can do it fluently, connecting technology decisions to business impact"
+          }
+        ]
+      },
+      {
+        "id": "q3",
+        "section": "strategic_identity",
+        "order": 3,
+        "text": "When faced with a business challenge, my first instinct is to:",
+        "options": [
+          {
+            "value": 1,
+            "label": "Jump to technical solutions and tools"
+          },
+          {
+            "value": 2,
+            "label": "Analyze technical requirements and constraints"
+          },
+          {
+            "value": 3,
+            "label": "Ask about business context and stakeholder needs"
+          },
+          {
+            "value": 4,
+            "label": "Frame it as a strategic opportunity with trade-offs"
+          },
+          {
+            "value": 5,
+            "label": "Consider enterprise implications, competitive dynamics, and system-level impact"
+          }
+        ]
+      },
+      {
+        "id": "q4",
+        "section": "strategic_identity",
+        "order": 4,
+        "text": "In the past quarter, I have been actively consulted by business leaders (Sales, Marketing, Operations, Finance) on strategic initiatives unrelated to IT infrastructure:",
+        "options": [
+          {
+            "value": 1,
+            "label": "Never / Not that I'm aware of"
+          },
+          {
+            "value": 2,
+            "label": "Once, for technical input"
+          },
+          {
+            "value": 3,
+            "label": "2-3 times, occasionally"
+          },
+          {
+            "value": 4,
+            "label": "4-6 times, fairly regularly"
+          },
+          {
+            "value": 5,
+            "label": "7+ times, I'm seen as a strategic business partner"
+          }
+        ]
+      },
+      {
+        "id": "q5",
+        "section": "visibility_positioning",
+        "order": 5,
+        "text": "When discussing technology strategy, I:",
+        "options": [
+          {
+            "value": 1,
+            "label": "Focus on technical architecture, tools, and infrastructure decisions"
+          },
+          {
+            "value": 2,
+            "label": "Describe technical capabilities and implementation roadmaps"
+          },
+          {
+            "value": 3,
+            "label": "Connect technology choices to departmental objectives"
+          },
+          {
+            "value": 4,
+            "label": "Frame technology in terms of business capabilities and market positioning"
+          },
+          {
+            "value": 5,
+            "label": "Articulate how technology creates competitive advantage and enables strategic business moves"
+          }
+        ]
+      },
+      {
+        "id": "q6",
+        "section": "visibility_positioning",
+        "order": 6,
+        "text": "C-suite executives in my organization would most likely describe me as:",
+        "options": [
+          {
+            "value": 1,
+            "label": "The person who keeps our systems running reliably"
+          },
+          {
+            "value": 2,
+            "label": "A solid technical leader who delivers IT projects"
+          },
+          {
+            "value": 3,
+            "label": "Someone who understands both technology and business needs"
+          },
+          {
+            "value": 4,
+            "label": "A business-minded technology leader who thinks strategically"
+          },
+          {
+            "value": 5,
+            "label": "A strategic partner who drives business transformation through technology"
+          }
+        ]
+      },
+      {
+        "id": "q7",
+        "section": "visibility_positioning",
+        "order": 7,
+        "text": "In the last 3 months, I have been invited to contribute to (select the HIGHEST level that applies):",
+        "options": [
+          {
+            "value": 1,
+            "label": "Technical architecture discussions within IT"
+          },
+          {
+            "value": 2,
+            "label": "IT strategy and roadmap planning"
+          },
+          {
+            "value": 3,
+            "label": "Cross-functional project and initiative planning"
+          },
+          {
+            "value": 4,
+            "label": "Business unit strategy sessions"
+          },
+          {
+            "value": 5,
+            "label": "Enterprise strategy, board discussions, or CEO-level strategic planning"
+          }
+        ]
+      },
+      {
+        "id": "q8",
+        "section": "visibility_positioning",
+        "order": 8,
+        "text": "When I speak in executive meetings, the response is typically:",
+        "options": [
+          {
+            "value": 1,
+            "label": "Polite listening, then conversation moves on"
+          },
+          {
+            "value": 2,
+            "label": "Questions about technical details or clarifications"
+          },
+          {
+            "value": 3,
+            "label": "Engagement with my points, some discussion"
+          },
+          {
+            "value": 4,
+            "label": "Executives lean in and ask follow-up questions about my strategic perspective"
+          },
+          {
+            "value": 5,
+            "label": "My input visibly shapes the direction of the conversation and decisions"
+          }
+        ]
+      },
+      {
+        "id": "q9",
+        "section": "political_capital",
+        "order": 9,
+        "text": "I have authentic, trusted relationships with:",
+        "options": [
+          {
+            "value": 1,
+            "label": "My direct team members and immediate IT colleagues"
+          },
+          {
+            "value": 2,
+            "label": "IT peers and key technical stakeholders across the organization"
+          },
+          {
+            "value": 3,
+            "label": "Some business leaders in functions I regularly work with"
+          },
+          {
+            "value": 4,
+            "label": "Multiple C-suite executives beyond the CIO/CTO"
+          },
+          {
+            "value": 5,
+            "label": "Board members, CEO, and external strategic partners"
+          }
+        ]
+      },
+      {
+        "id": "q10",
+        "section": "political_capital",
+        "order": 10,
+        "text": "In the last month, how many C-suite executives (OUTSIDE of CIO/CTO) have you had a substantive conversation with that went beyond project updates or technical requests?",
+        "options": [
+          {
+            "value": 1,
+            "label": "Zero"
+          },
+          {
+            "value": 2,
+            "label": "One"
+          },
+          {
+            "value": 3,
+            "label": "Two"
+          },
+          {
+            "value": 4,
+            "label": "Three to four"
+          },
+          {
+            "value": 5,
+            "label": "Five or more"
+          }
+        ]
+      },
+      {
+        "id": "q11",
+        "section": "political_capital",
+        "order": 11,
+        "text": "When organizational politics emerge around priorities or resources, I:",
+        "options": [
+          {
+            "value": 1,
+            "label": "Try to stay out of it and focus on delivering my work"
+          },
+          {
+            "value": 2,
+            "label": "Get frustrated by the dynamics and wish people were more logical"
+          },
+          {
+            "value": 3,
+            "label": "Navigate them when absolutely necessary"
+          },
+          {
+            "value": 4,
+            "label": "Proactively anticipate and manage political dynamics"
+          },
+          {
+            "value": 5,
+            "label": "Strategically build coalitions, shape narratives, and influence outcomes"
+          }
+        ]
+      },
+      {
+        "id": "q12",
+        "section": "political_capital",
+        "order": 12,
+        "text": "In major organizational decisions that impact technology direction, I am:",
+        "options": [
+          {
+            "value": 1,
+            "label": "Informed after decisions have been made"
+          },
+          {
+            "value": 2,
+            "label": "Asked for technical input or feasibility assessment"
+          },
+          {
+            "value": 3,
+            "label": "Consulted on IT-related aspects during planning"
+          },
+          {
+            "value": 4,
+            "label": "Actively involved in strategic planning and trade-off discussions"
+          },
+          {
+            "value": 5,
+            "label": "A key influencer who shapes the decision before it's made"
+          }
+        ]
+      }
+    ],
+    
+    "scoring_logic": {
+      "calculation": "Sum all question values (q1 through q12)",
+      "dimension_breakdown": {
+        "strategic_identity": {
+          "questions": ["q1", "q2", "q3", "q4"],
+          "max_score": 20,
+          "formula": "q1 + q2 + q3 + q4"
+        },
+        "visibility_positioning": {
+          "questions": ["q5", "q6", "q7", "q8"],
+          "max_score": 20,
+          "formula": "q5 + q6 + q7 + q8"
+        },
+        "political_capital": {
+          "questions": ["q9", "q10", "q11", "q12"],
+          "max_score": 20,
+          "formula": "q9 + q10 + q11 + q12"
+        }
+      },
+      "zone_determination": {
+        "ZONE_1": {
+          "min_score": 12,
+          "max_score": 29
+        },
+        "ZONE_2": {
+          "min_score": 30,
+          "max_score": 44
+        },
+        "ZONE_3": {
+          "min_score": 45,
+          "max_score": 54
+        },
+        "ZONE_4": {
+          "min_score": 55,
+          "max_score": 60
+        }
+      },
+      "priority_determination": {
+        "logic": "Identify the 2 dimensions with the lowest percentage scores",
+        "dimension_mapping": {
+          "strategic_identity": "Strategic Business Thinking",
+          "visibility_positioning": "Strategic Communication",
+          "political_capital": "Cross-Functional Influence"
+        }
+      }
+    },
+    
+    "zones": {
+      "ZONE_1": {
+        "zone_id": "ZONE_1",
+        "title": "Technical Expert",
+        "score_range": "12-29 points",
+        "current_reality": "You're operating primarily as a high-level technologist. You deliver exceptional technical results, but you're largely invisible at the strategic table.",
+        "gap": "Significant distance to strategic leader identity. You're solving technical problems while others are shaping business direction.",
+        "meaning": "You're highly competent, but positioned wrong. The organization sees you as an implementer, not a strategist.",
+        "priorities": [
+          {
+            "priority_number": 1,
+            "title": "Strategic Business Thinking",
+            "description": "Learn to speak the language of business value, not technical features"
+          },
+          {
+            "priority_number": 2,
+            "title": "Executive Relationships",
+            "description": "Build authentic connections with C-suite leaders outside IT"
+          }
+        ],
+        "next_step": "Take the Complete Next Role Readiness Assessment to identify your specific breakthrough capabilities.",
+        "cta_type": "paid_assessment"
+      },
+      "ZONE_2": {
+        "zone_id": "ZONE_2",
+        "title": "Emerging Strategist",
+        "score_range": "30-44 points",
+        "current_reality": "You're transitioning from technical expert to strategic contributor, but your positioning is inconsistent. Sometimes you're at the strategic table, sometimes you're not.",
+        "gap": "Moderate distance. You think strategically, but you're not consistently visible or influential at the executive level.",
+        "meaning": "You're on the cusp of breakthrough. 2-3 specific capabilities are holding you back from being seen as a strategic leader.",
+        "priorities": [
+          {
+            "priority_number": 1,
+            "title": "Strategic Communication",
+            "description": "Translate every technical initiative into compelling business narratives"
+          },
+          {
+            "priority_number": 2,
+            "title": "Cross-Functional Influence",
+            "description": "Build credibility beyond IT as a business partner"
+          }
+        ],
+        "next_step": "Join the 'Next Role Readiness' workshop to learn the exact frameworks that close these gaps.",
+        "cta_type": "workshop"
+      },
+      "ZONE_3": {
+        "zone_id": "ZONE_3",
+        "title": "Strategic Contributor",
+        "score_range": "45-54 points",
+        "current_reality": "You're recognized as strategic within your function, but not yet at the enterprise level. You influence IT decisions, but not business direction.",
+        "gap": "Final positioning and visibility barriers. You have the strategic thinking, but lack the organizational positioning.",
+        "meaning": "You're ready for a strategic role, but you're not positioned for it. The gap is visibility, relationships, and political capital.",
+        "priorities": [
+          {
+            "priority_number": 1,
+            "title": "Executive Presence",
+            "description": "Position yourself as an enterprise leader, not just an IT leader"
+          },
+          {
+            "priority_number": 2,
+            "title": "Political Capital",
+            "description": "Build strategic influence across the C-suite"
+          }
+        ],
+        "next_step": "Book a Next Role Roadmap Session to create your personalized positioning strategy.",
+        "cta_type": "roadmap_session"
+      },
+      "ZONE_4": {
+        "zone_id": "ZONE_4",
+        "title": "Executive Ready",
+        "score_range": "55-60 points",
+        "current_reality": "You think strategically, communicate effectively, and have strong executive relationships. You're ready for a strategic or C-suite role.",
+        "gap": "Minimal. This is about timing, opportunity, and final positioning.",
+        "meaning": "You're not blocked by capability—you're blocked by opportunity visibility or organizational timing.",
+        "priorities": [
+          {
+            "priority_number": 1,
+            "title": "Strategic Opportunity Creation",
+            "description": "Actively position yourself for the specific role you want"
+          },
+          {
+            "priority_number": 2,
+            "title": "Personal Brand Amplification",
+            "description": "Ensure decision-makers see your strategic value"
+          }
+        ],
+        "next_step": "Book a strategy session to accelerate your timeline and position for specific opportunities.",
+        "cta_type": "strategy_session"
+      }
+    },
+    
+    "cta_content": {
+      "header": "You've Discovered Your Zone. Now What?",
+      "subheader": "This quick diagnostic revealed your Strategic Readiness Zone and your top 2 priority areas.",
+      "gap_statement": "But here's what it DIDN'T reveal:",
+      "missing_insights": [
+        "The *specific* behavioral gaps holding you back",
+        "How you compare to colleagues who've been promoted",
+        "Your detailed development roadmap with concrete actions",
+        "The precise frameworks that will close your gaps"
+      ],
+      "options_header": "Three Ways to Accelerate Your Breakthrough:",
+      "options": [
+        {
+          "number": 1,
+          "title": "Take the Complete Assessment",
+          "price": "₹8,500",
+          "benefits": [
+            "35-question deep diagnostic with behavioral evidence",
+            "Detailed Gap Profile across all 6 dimensions",
+            "Personalized 90-day development roadmap",
+            "Specific frameworks mapped to your gaps"
+          ],
+          "cta_text": "Take Complete Assessment",
+          "cta_link": "/paid-assessment"
+        },
+        {
+          "number": 2,
+          "title": "Join 'Next Role Readiness' Workshop",
+          "price": "Free",
+          "benefits": [
+            "Learn the 3 frameworks that transform technical experts into strategic leaders",
+            "Live diagnostic discussion and gap analysis",
+            "Create your breakthrough action plan"
+          ],
+          "cta_text": "Register for Workshop",
+          "cta_link": "/workshop"
+        },
+        {
+          "number": 3,
+          "title": "Join Strategic Leadership Community",
+          "price": "₹8,500/month",
+          "benefits": [
+            "Weekly frameworks that build strategic presence",
+            "Office hours for personalized guidance",
+            "Peer learning with senior IT leaders in transition"
+          ],
+          "cta_text": "Join Community",
+          "cta_link": "/community"
+        }
+      ],
+      "consultation_cta": {
+        "text": "Or book a complimentary 15-minute consultation to discuss your results:",
+        "cta_text": "Book Call",
+        "cta_link": "/consultation"
+      }
+    },
+    
+    "priority_definitions": {
+      "Strategic Business Thinking": {
+        "description": "The ability to understand and articulate business models, speak in terms of business value (ROI, competitive advantage, market positioning), and connect technical decisions to enterprise outcomes.",
+        "development_focus": [
+          "Learn to explain your organization's business model fluently",
+          "Practice translating technical initiatives into business value stories",
+          "Study strategic frameworks like Business Model Canvas"
+        ]
+      },
+      "Executive Relationships": {
+        "description": "Building authentic, trusted relationships with C-suite executives and business leaders outside of IT, positioning yourself as a strategic partner rather than a service provider.",
+        "development_focus": [
+          "Schedule regular 1-on-1s with business leaders",
+          "Understand C-suite priorities and pain points",
+          "Practice executive-level communication"
+        ]
+      },
+      "Strategic Communication": {
+        "description": "The ability to translate complex technical concepts into compelling business narratives that resonate with non-technical stakeholders and inspire action.",
+        "development_focus": [
+          "Lead with business outcomes in all presentations",
+          "Master the art of strategic storytelling",
+          "Develop executive presence in communication"
+        ]
+      },
+      "Cross-Functional Influence": {
+        "description": "Building credibility and influence across the organization beyond IT, being consulted on strategic initiatives, and shaping decisions outside your functional area.",
+        "development_focus": [
+          "Volunteer for cross-functional strategic initiatives",
+          "Build relationships with peers in Sales, Marketing, Operations, Finance",
+          "Position yourself as a business partner, not just a technical resource"
+        ]
+      },
+      "Executive Presence": {
+        "description": "How you show up in executive settings—your gravitas, confidence, strategic thinking, and ability to command attention and respect at the highest levels.",
+        "development_focus": [
+          "Master executive communication techniques",
+          "Develop strategic thinking frameworks",
+          "Build your personal brand as a strategic leader"
+        ]
+      },
+      "Political Capital": {
+        "description": "Your ability to navigate organizational politics, build coalitions, anticipate and manage resistance, and shape narratives to influence strategic outcomes.",
+        "development_focus": [
+          "Map the informal power structure in your organization",
+          "Practice building strategic coalitions",
+          "Learn to anticipate and address political dynamics"
+        ]
+      },
+      "Strategic Opportunity Creation": {
+        "description": "Proactively identifying and positioning yourself for specific strategic roles, creating visibility for your capabilities, and accelerating your promotion timeline.",
+        "development_focus": [
+          "Define your target role clearly",
+          "Build relationships with decision-makers",
+          "Create opportunities to demonstrate strategic value"
+        ]
+      },
+      "Personal Brand Amplification": {
+        "description": "Ensuring that decision-makers consistently see and recognize your strategic value, positioning yourself as an indispensable strategic asset to the organization.",
+        "development_focus": [
+          "Share strategic insights regularly",
+          "Speak at high-visibility forums",
+          "Build thought leadership in your domain"
+        ]
+      }
+    }
+  },
+  
+  "implementation_instructions": {
+    "for_developer": {
+      "database_seeding": "Use the 'questions' array to seed your Question model. Each question should include the section, order, text, and options. The 'zones' object should seed your Zone/Interpretation model.",
+      "frontend_rendering": "Map the questions array to your React components. Use the 'order' field to sequence questions. Display one question at a time with radio buttons for options.",
+      "scoring_implementation": "Follow the 'scoring_logic' object exactly. Calculate dimension scores first, then determine zone based on total score using 'zone_determination' ranges.",
+      "results_display": "After scoring, fetch the appropriate zone from 'zones' object using the zone_id. Display the zone title, current_reality, gap, meaning, priorities, and next_step.",
+      "priority_calculation": "Calculate percentage scores for each dimension (score / max_score * 100). Sort dimensions by percentage ascending. The two lowest become priority1 and priority2. Map dimension IDs to priority names using 'priority_determination.dimension_mapping'.",
+      "cta_rendering": "Use 'cta_content' object to display the call-to-action section on results page. Include header, missing_insights list, and all three options with benefits."
+    },
+    "validation_rules": {
+      "question_responses": "All 12 questions must be answered. Each response must be an integer between 1 and 5 inclusive.",
+      "score_calculation": "Total score must be between 12 and 60. Each dimension score must be between 4 and 20.",
+      "zone_assignment": "Zone must be one of: ZONE_1, ZONE_2, ZONE_3, ZONE_4. Verify score falls within zone's min_score and max_score range."
+    },
+    "api_endpoints": {
+      "get_questions": "GET /api/assessment/questions - Returns questions array in order",
+      "submit_assessment": "POST /api/assessment/submit - Accepts responses object {q1: 3, q2: 4, ...}, calculates scores, determines zone, saves to database, returns complete results",
+      "get_results": "GET /api/assessment/:id/results - Returns zone interpretation, priorities, dimension breakdown, CTA content"
+    }
+  }
+}

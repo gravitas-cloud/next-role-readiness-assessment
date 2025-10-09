@@ -1,23 +1,7 @@
-export interface AssessmentResponses {
-  q1: number;
-  q2: number;
-  q3: number;
-  q4: number;
-  q5: number;
-  q6: number;
-  q7: number;
-  q8: number;
-  q9: number;
-  q10: number;
-  q11: number;
-  q12: number;
-}
+import contentLibrary from "./content-library/assessment-content.json";
 
-export interface DimensionScore {
-  name: string;
-  score: number;
-  max: number;
-  percentage: number;
+export interface AssessmentResponses {
+  [key: string]: number; // q1: 3, q2: 4, etc.
 }
 
 export interface ScoringResult {
@@ -28,68 +12,97 @@ export interface ScoringResult {
   zone: string;
   priority1: string;
   priority2: string;
-  dimensionBreakdown: DimensionScore[];
 }
 
-export function calculateScores(responses: AssessmentResponses): ScoringResult {
-  const scores = {
-    strategicIdentity: responses.q1 + responses.q2 + responses.q3 + responses.q4,
-    visibilityPositioning: responses.q5 + responses.q6 + responses.q7 + responses.q8,
-    politicalCapital: responses.q9 + responses.q10 + responses.q11 + responses.q12,
-  };
-
-  const totalScore = Object.values(scores).reduce((a, b) => a + b, 0);
-
-  // Determine zone (total out of 60)
-  let zone: string;
-  if (totalScore >= 12 && totalScore <= 29) {
-    zone = "ZONE_1";
-  } else if (totalScore >= 30 && totalScore <= 44) {
-    zone = "ZONE_2";
-  } else if (totalScore >= 45 && totalScore <= 54) {
-    zone = "ZONE_3";
-  } else if (totalScore >= 55 && totalScore <= 60) {
-    zone = "ZONE_4";
-  } else {
-    zone = "ZONE_1"; // Default fallback
+export function calculateAssessmentScore(responses: AssessmentResponses): ScoringResult {
+  // Validate all 12 questions are answered
+  const questionIds = ['q1', 'q2', 'q3', 'q4', 'q5', 'q6', 'q7', 'q8', 'q9', 'q10', 'q11', 'q12'];
+  for (const qId of questionIds) {
+    if (!responses[qId] || responses[qId] < 1 || responses[qId] > 5) {
+      throw new Error(`Invalid response for ${qId}`);
+    }
   }
 
-  // Define dimensions with proper names
-  const dimensions: DimensionScore[] = [
+  // Calculate dimension scores using content library structure
+  const strategicIdentity = responses.q1 + responses.q2 + responses.q3 + responses.q4;
+  const visibilityPositioning = responses.q5 + responses.q6 + responses.q7 + responses.q8;
+  const politicalCapital = responses.q9 + responses.q10 + responses.q11 + responses.q12;
+  
+  const totalScore = strategicIdentity + visibilityPositioning + politicalCapital;
+  
+  // Determine zone based on content library ranges
+  const zoneRanges = contentLibrary.assessment_content.scoring_logic.zone_determination;
+  let zone = "ZONE_1";
+  
+  for (const [zoneId, range] of Object.entries(zoneRanges)) {
+    if (totalScore >= range.min_score && totalScore <= range.max_score) {
+      zone = zoneId;
+      break;
+    }
+  }
+  
+  // Determine priorities (lowest 2 dimensions by percentage)
+  const dimensionMapping = contentLibrary.assessment_content.scoring_logic.priority_determination.dimension_mapping;
+  
+  const dimensions = [
     { 
-      name: "Strategic Business Thinking", 
-      score: scores.strategicIdentity, 
-      max: 20,
-      percentage: 0 
+      id: 'strategic_identity', 
+      name: dimensionMapping.strategic_identity, 
+      score: strategicIdentity, 
+      max: 20 
     },
     { 
-      name: "Strategic Communication", 
-      score: scores.visibilityPositioning, 
-      max: 20,
-      percentage: 0 
+      id: 'visibility_positioning', 
+      name: dimensionMapping.visibility_positioning, 
+      score: visibilityPositioning, 
+      max: 20 
     },
     { 
-      name: "Cross-Functional Influence", 
-      score: scores.politicalCapital, 
-      max: 20,
-      percentage: 0 
+      id: 'political_capital', 
+      name: dimensionMapping.political_capital, 
+      score: politicalCapital, 
+      max: 20 
     }
   ];
-
-  // Calculate percentage scores
+  
+  // Calculate percentages and sort by lowest first
   dimensions.forEach(d => {
-    d.percentage = (d.score / d.max) * 100;
+    (d as any).percentage = (d.score / d.max) * 100;
   });
-
-  // Sort by percentage (lowest first) to get priorities
-  dimensions.sort((a, b) => a.percentage - b.percentage);
-
+  dimensions.sort((a, b) => (a as any).percentage - (b as any).percentage);
+  
   return {
-    ...scores,
+    strategicIdentity,
+    visibilityPositioning,
+    politicalCapital,
     totalScore,
     zone,
     priority1: dimensions[0].name,
-    priority2: dimensions[1].name,
-    dimensionBreakdown: dimensions
+    priority2: dimensions[1].name
   };
+}
+
+// Get zone interpretation from content library
+export function getZoneInterpretation(zone: string) {
+  return contentLibrary.assessment_content.zones[zone as keyof typeof contentLibrary.assessment_content.zones] || null;
+}
+
+// Get priority definition from content library
+export function getPriorityDefinition(priorityName: string) {
+  return contentLibrary.assessment_content.priority_definitions[priorityName as keyof typeof contentLibrary.assessment_content.priority_definitions] || null;
+}
+
+// Get all questions from content library
+export function getAssessmentQuestions() {
+  return {
+    opening: contentLibrary.assessment_content.opening_content,
+    sections: contentLibrary.assessment_content.sections,
+    questions: contentLibrary.assessment_content.questions,
+    metadata: contentLibrary.assessment_content.metadata
+  };
+}
+
+// Get CTA content from content library
+export function getCTAContent() {
+  return contentLibrary.assessment_content.cta_content;
 }

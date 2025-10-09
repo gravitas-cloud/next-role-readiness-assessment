@@ -2,7 +2,14 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, authenticateToken } from "./auth";
-import { calculateScores, type AssessmentResponses } from "./scoring";
+import { 
+  calculateAssessmentScore, 
+  getZoneInterpretation, 
+  getPriorityDefinition,
+  getAssessmentQuestions,
+  getCTAContent,
+  type AssessmentResponses 
+} from "./scoring";
 import { generatePDFReport } from "./pdf-generator";
 import { z } from "zod";
 import path from "path";
@@ -13,6 +20,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
   setupAuth(app);
 
   // Assessment routes
+  
+  // Get assessment questions and content (public endpoint for easy testing)
+  app.get("/api/assessment/questions", (req, res) => {
+    try {
+      const content = getAssessmentQuestions();
+      res.json(content);
+    } catch (error) {
+      console.error("Error fetching questions:", error);
+      res.status(500).json({ message: "Failed to fetch questions" });
+    }
+  });
   
   // Create new assessment (authenticated)
   app.post("/api/assessments", authenticateToken, async (req, res) => {
@@ -78,7 +96,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         q12: z.number().min(1).max(5),
       });
 
-      const responses = responseSchema.parse(req.body) as AssessmentResponses;
+      const responses = responseSchema.parse(req.body);
       
       const assessment = await storage.getAssessment(req.params.id);
       
@@ -91,8 +109,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(403).json({ message: "Access denied" });
       }
 
-      // Calculate scores
-      const scores = calculateScores(responses);
+      // Calculate scores using content library
+      const scores = calculateAssessmentScore(responses as AssessmentResponses);
 
       // Update assessment with responses and scores
       await storage.updateAssessmentResponses(req.params.id, responses as unknown as Record<string, number>);
@@ -106,16 +124,63 @@ export async function registerRoutes(app: Express): Promise<Server> {
         priority2: scores.priority2,
       });
 
-      res.json({
-        ...completedAssessment,
-        dimensionBreakdown: scores.dimensionBreakdown,
-      });
+      res.json(completedAssessment);
     } catch (error) {
       console.error("Error submitting assessment:", error);
       if (error instanceof z.ZodError) {
         return res.status(400).json({ message: error.errors[0].message });
       }
       res.status(500).json({ message: "Failed to submit assessment" });
+    }
+  });
+
+  // Get assessment results with zone interpretation and CTA content (authenticated)
+  app.get("/api/assessments/:id/results", authenticateToken, async (req, res) => {
+    try {
+      const assessment = await storage.getAssessment(req.params.id);
+      
+      if (!assessment) {
+        return res.status(404).json({ message: "Assessment not found" });
+      }
+
+      // Ensure user owns this assessment
+      if (assessment.userId !== req.user!.id) {
+        return res.status(403).json({ message: "Access denied" });
+      }
+
+      // Get zone interpretation from content library
+      const zoneData = getZoneInterpretation(assessment.zone || "ZONE_1");
+      
+      // Get priority definitions
+      const priority1Data = getPriorityDefinition(assessment.priority1 || "");
+      const priority2Data = getPriorityDefinition(assessment.priority2 || "");
+      
+      // Get CTA content
+      const ctaContent = getCTAContent();
+
+      res.json({
+        assessment: {
+          id: assessment.id,
+          totalScore: assessment.totalScore,
+          zone: assessment.zone,
+          strategicIdentity: assessment.strategicIdentity,
+          visibilityPositioning: assessment.visibilityPositioning,
+          politicalCapital: assessment.politicalCapital,
+          priority1: assessment.priority1,
+          priority2: assessment.priority2,
+          pdfUrl: assessment.pdfUrl,
+          completedAt: assessment.completedAt
+        },
+        zoneInterpretation: zoneData,
+        priorities: {
+          priority1: priority1Data,
+          priority2: priority2Data
+        },
+        cta: ctaContent
+      });
+    } catch (error) {
+      console.error("Error fetching results:", error);
+      res.status(500).json({ message: "Failed to fetch results" });
     }
   });
 
