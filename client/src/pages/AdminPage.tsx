@@ -3,7 +3,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import AdminReportCard from "@/components/AdminReportCard";
 import ThemeToggle from "@/components/ThemeToggle";
-import { Award, Search, LogOut } from "lucide-react";
+import { Search, LogOut } from "lucide-react";
+import logoUrl from "@assets/Gravitas Academy logo_1759991845447.png";
 import {
   Dialog,
   DialogContent,
@@ -69,8 +70,8 @@ export default function AdminPage() {
     <div className="min-h-screen bg-background">
       <header className="sticky top-0 z-50 w-full border-b bg-background">
         <div className="max-w-7xl mx-auto flex h-16 items-center justify-between px-6">
-          <div className="flex items-center gap-2">
-            <Award className="h-6 w-6 text-primary" />
+          <div className="flex items-center gap-3">
+            <img src={logoUrl} alt="Gravitas Academy" className="h-10 w-auto" />
             <span className="font-semibold text-lg">Admin Dashboard</span>
           </div>
           <div className="flex items-center gap-4">

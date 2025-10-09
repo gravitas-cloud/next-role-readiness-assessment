@@ -1,8 +1,8 @@
 import { useState } from "react";
 import AuthForm from "@/components/AuthForm";
 import ThemeToggle from "@/components/ThemeToggle";
-import { Award } from "lucide-react";
 import { useLocation } from "wouter";
+import logoUrl from "@assets/Gravitas Academy logo_1759991845447.png";
 
 export default function AuthPage() {
   const [mode, setMode] = useState<"login" | "register">("register");
@@ -15,11 +15,10 @@ export default function AuthPage() {
           <div className="flex items-center justify-between">
             <button 
               onClick={() => setLocation('/')}
-              className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+              className="flex items-center gap-3 hover:opacity-80 transition-opacity"
               data-testid="button-back-home"
             >
-              <Award className="h-6 w-6 text-primary" />
-              <span className="font-semibold text-lg">Gravitas Academy</span>
+              <img src={logoUrl} alt="Gravitas Academy" className="h-10 w-auto" />
             </button>
             <ThemeToggle />
           </div>

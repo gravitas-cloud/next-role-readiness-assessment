@@ -3,8 +3,9 @@ import { Button } from "@/components/ui/button";
 import ProgressBar from "@/components/ProgressBar";
 import AssessmentQuestion from "@/components/AssessmentQuestion";
 import ThemeToggle from "@/components/ThemeToggle";
-import { Award, ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useLocation } from "wouter";
+import logoUrl from "@assets/Gravitas Academy logo_1759991845447.png";
 
 const questions = [
   {
@@ -60,9 +61,8 @@ export default function AssessmentPage() {
     <div className="min-h-screen flex flex-col">
       <header className="border-b bg-background">
         <div className="max-w-7xl mx-auto flex h-16 items-center justify-between px-6">
-          <div className="flex items-center gap-2">
-            <Award className="h-6 w-6 text-primary" />
-            <span className="font-semibold text-lg">Gravitas Academy</span>
+          <div className="flex items-center gap-3">
+            <img src={logoUrl} alt="Gravitas Academy" className="h-10 w-auto" />
           </div>
           <ThemeToggle />
         </div>

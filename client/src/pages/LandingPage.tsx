@@ -2,8 +2,9 @@ import { Button } from "@/components/ui/button";
 import HeroSection from "@/components/HeroSection";
 import FeatureCard from "@/components/FeatureCard";
 import ThemeToggle from "@/components/ThemeToggle";
-import { Target, TrendingUp, Users, Award, Clock, Shield } from "lucide-react";
+import { Target, TrendingUp, Users, Clock, Shield } from "lucide-react";
 import { useLocation } from "wouter";
+import logoUrl from "@assets/Gravitas Academy logo_1759991845447.png";
 
 export default function LandingPage() {
   const [, setLocation] = useLocation();
@@ -12,9 +13,8 @@ export default function LandingPage() {
     <div className="min-h-screen">
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="max-w-7xl mx-auto flex h-16 items-center justify-between px-6">
-          <div className="flex items-center gap-2">
-            <Award className="h-6 w-6 text-primary" />
-            <span className="font-semibold text-lg">Gravitas Academy</span>
+          <div className="flex items-center gap-3">
+            <img src={logoUrl} alt="Gravitas Academy" className="h-10 w-auto" />
           </div>
           <div className="flex items-center gap-4">
             <Button 
