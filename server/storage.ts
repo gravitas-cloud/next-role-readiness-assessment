@@ -26,6 +26,9 @@ export interface IStorage {
   getPendingAssessments(): Promise<Assessment[]>;
   approveAssessment(id: string): Promise<Assessment>;
   
+  // PDF generation
+  updatePdfUrl(id: string, pdfUrl: string): Promise<Assessment>;
+  
   // Session store
   sessionStore: any;
 }
@@ -106,6 +109,18 @@ export class DatabaseStorage implements IStorage {
     const [assessment] = await db
       .update(assessments)
       .set({ reportApproved: true })
+      .where(eq(assessments.id, id))
+      .returning();
+    return assessment;
+  }
+
+  async updatePdfUrl(id: string, pdfUrl: string): Promise<Assessment> {
+    const [assessment] = await db
+      .update(assessments)
+      .set({ 
+        pdfUrl,
+        reportGenerated: true 
+      })
       .where(eq(assessments.id, id))
       .returning();
     return assessment;

@@ -2,12 +2,194 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { setupAuth, authenticateToken } from "./auth";
+import { calculateScores, type AssessmentResponses } from "./scoring";
+import { generatePDFReport } from "./pdf-generator";
+import { z } from "zod";
+import path from "path";
+import fs from "fs";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Setup authentication routes
   setupAuth(app);
 
-  // Assessment routes will be added here
+  // Assessment routes
+  
+  // Create new assessment (authenticated)
+  app.post("/api/assessments", authenticateToken, async (req, res) => {
+    try {
+      const assessment = await storage.createAssessment({
+        userId: req.user!.id,
+        responses: {},
+      });
+      res.status(201).json(assessment);
+    } catch (error) {
+      console.error("Error creating assessment:", error);
+      res.status(500).json({ message: "Failed to create assessment" });
+    }
+  });
+
+  // Get user's assessments (authenticated)
+  app.get("/api/assessments", authenticateToken, async (req, res) => {
+    try {
+      const assessments = await storage.getUserAssessments(req.user!.id);
+      res.json(assessments);
+    } catch (error) {
+      console.error("Error fetching assessments:", error);
+      res.status(500).json({ message: "Failed to fetch assessments" });
+    }
+  });
+
+  // Get specific assessment (authenticated)
+  app.get("/api/assessments/:id", authenticateToken, async (req, res) => {
+    try {
+      const assessment = await storage.getAssessment(req.params.id);
+      
+      if (!assessment) {
+        return res.status(404).json({ message: "Assessment not found" });
+      }
+
+      // Ensure user owns this assessment
+      if (assessment.userId !== req.user!.id) {
+        return res.status(403).json({ message: "Access denied" });
+      }
+
+      res.json(assessment);
+    } catch (error) {
+      console.error("Error fetching assessment:", error);
+      res.status(500).json({ message: "Failed to fetch assessment" });
+    }
+  });
+
+  // Submit assessment responses (authenticated)
+  app.post("/api/assessments/:id/submit", authenticateToken, async (req, res) => {
+    try {
+      const responseSchema = z.object({
+        q1: z.number().min(1).max(5),
+        q2: z.number().min(1).max(5),
+        q3: z.number().min(1).max(5),
+        q4: z.number().min(1).max(5),
+        q5: z.number().min(1).max(5),
+        q6: z.number().min(1).max(5),
+        q7: z.number().min(1).max(5),
+        q8: z.number().min(1).max(5),
+        q9: z.number().min(1).max(5),
+        q10: z.number().min(1).max(5),
+        q11: z.number().min(1).max(5),
+        q12: z.number().min(1).max(5),
+      });
+
+      const responses = responseSchema.parse(req.body) as AssessmentResponses;
+      
+      const assessment = await storage.getAssessment(req.params.id);
+      
+      if (!assessment) {
+        return res.status(404).json({ message: "Assessment not found" });
+      }
+
+      // Ensure user owns this assessment
+      if (assessment.userId !== req.user!.id) {
+        return res.status(403).json({ message: "Access denied" });
+      }
+
+      // Calculate scores
+      const scores = calculateScores(responses);
+
+      // Update assessment with responses and scores
+      await storage.updateAssessmentResponses(req.params.id, responses as unknown as Record<string, number>);
+      const completedAssessment = await storage.completeAssessment(req.params.id, {
+        strategicIdentity: scores.strategicIdentity,
+        visibilityPositioning: scores.visibilityPositioning,
+        politicalCapital: scores.politicalCapital,
+        totalScore: scores.totalScore,
+        zone: scores.zone,
+        priority1: scores.priority1,
+        priority2: scores.priority2,
+      });
+
+      res.json({
+        ...completedAssessment,
+        dimensionBreakdown: scores.dimensionBreakdown,
+      });
+    } catch (error) {
+      console.error("Error submitting assessment:", error);
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: error.errors[0].message });
+      }
+      res.status(500).json({ message: "Failed to submit assessment" });
+    }
+  });
+
+  // Generate PDF report (authenticated)
+  app.post("/api/assessments/:id/generate-pdf", authenticateToken, async (req, res) => {
+    try {
+      const assessment = await storage.getAssessment(req.params.id);
+      
+      if (!assessment) {
+        return res.status(404).json({ message: "Assessment not found" });
+      }
+
+      // Ensure user owns this assessment
+      if (assessment.userId !== req.user!.id) {
+        return res.status(403).json({ message: "Access denied" });
+      }
+
+      // Ensure assessment is completed
+      if (!assessment.completedAt) {
+        return res.status(400).json({ message: "Assessment not completed" });
+      }
+
+      // Generate PDF
+      const pdfPath = await generatePDFReport(assessment, req.user!);
+      const pdfUrl = `/api/reports/${assessment.id}.pdf`;
+      
+      // Update assessment with PDF URL
+      const updatedAssessment = await storage.updatePdfUrl(assessment.id, pdfUrl);
+
+      res.json({ 
+        message: "PDF generated successfully", 
+        pdfUrl,
+        assessment: updatedAssessment 
+      });
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+      res.status(500).json({ message: "Failed to generate PDF" });
+    }
+  });
+
+  // Serve PDF reports (authenticated)
+  app.get("/api/reports/:filename", authenticateToken, async (req, res) => {
+    try {
+      const filename = req.params.filename;
+      const assessmentId = filename.replace(".pdf", "");
+      
+      const assessment = await storage.getAssessment(assessmentId);
+      
+      if (!assessment) {
+        return res.status(404).json({ message: "Assessment not found" });
+      }
+
+      // Ensure user owns this assessment
+      if (assessment.userId !== req.user!.id) {
+        return res.status(403).json({ message: "Access denied" });
+      }
+
+      const filePath = path.join(process.cwd(), "storage", "reports", filename);
+      
+      if (!fs.existsSync(filePath)) {
+        return res.status(404).json({ message: "PDF not found" });
+      }
+
+      res.setHeader("Content-Type", "application/pdf");
+      res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
+      
+      const fileStream = fs.createReadStream(filePath);
+      fileStream.pipe(res);
+    } catch (error) {
+      console.error("Error serving PDF:", error);
+      res.status(500).json({ message: "Failed to serve PDF" });
+    }
+  });
+
   // Admin routes will be added here
   // MailerLite routes will be added here
 

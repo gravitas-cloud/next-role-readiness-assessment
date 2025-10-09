@@ -1,0 +1,132 @@
+const PDFDocument = require('pdfkit');
+const fs = require('fs');
+
+async function generateReport(assessment, user) {
+  return new Promise((resolve, reject) => {
+    const doc = new PDFDocument({
+      size: 'A4',
+      margins: { top: 50, bottom: 50, left: 50, right: 50 }
+    });
+
+    const filePath = `/tmp/${assessment.id}.pdf`;
+    const stream = fs.createWriteStream(filePath);
+    doc.pipe(stream);
+
+    // Header
+    doc.fontSize(24)
+       .fillColor('#1E40AF')
+       .text('Next Role Readiness Diagnostic', { align: 'center' });
+
+    doc.moveDown();
+    doc.fontSize(12)
+       .fillColor('#6B7280')
+       .text(`Results for ${user.name}`, { align: 'center' });
+
+    // Zone Section
+    doc.moveDown(2);
+    const zoneData = ZONES[assessment.zone];
+    doc.fontSize(20)
+       .fillColor('#000000')
+       .text(zoneData.title, { align: 'left' });
+
+    doc.fontSize(11)
+       .fillColor('#6B7280')
+       .text(`Your Score: ${assessment.totalScore}/60 points`, { align: 'left' });
+
+    // Visual bar chart for dimensions
+    doc.moveDown();
+    drawBarChart(doc, {
+      'Strategic Identity': assessment.strategicIdentity,
+      'Visibility & Positioning': assessment.visibilityPositioning,
+      'Political Capital': assessment.politicalCapital
+    });
+
+    // Zone interpretation
+    doc.moveDown(2);
+    doc.fontSize(12)
+       .fillColor('#000000')
+       .text('What This Means:', { underline: true });
+
+    doc.fontSize(10)
+       .fillColor('#374151')
+       .text(zoneData.currentReality, { align: 'justify' });
+
+    // Priorities
+    doc.addPage();
+    doc.fontSize(18)
+       .fillColor('#1E40AF')
+       .text('Your Top Development Priorities', { align: 'left' });
+
+    // Priority 1
+    doc.moveDown();
+    doc.fontSize(14)
+       .fillColor('#000000')
+       .text(`Priority #1: ${assessment.priority1}`);
+
+    const priority1Data = PRIORITIES[assessment.priority1];
+    doc.fontSize(10)
+       .fillColor('#374151')
+       .text(priority1Data.description, { align: 'justify' });
+
+    // Repeat for Priority 2
+
+    // CTA Box
+    doc.moveDown(2);
+    doc.rect(50, doc.y, 495, 120)
+       .fillAndStroke('#F3F4F6', '#D1D5DB');
+
+    doc.fillColor('#000000')
+       .fontSize(14)
+       .text('Ready to Close These Gaps?', 60, doc.y + 20);
+
+    doc.fontSize(10)
+       .text('→ Take Complete Assessment (₹8,500)', 60, doc.y + 10);
+    doc.text('→ Join Free Workshop', 60, doc.y + 5);
+    doc.text('→ Book 15-min Consultation', 60, doc.y + 5);
+
+    doc.end();
+
+    stream.on('finish', () => {
+      resolve(filePath);
+    });
+
+    stream.on('error', reject);
+  });
+}
+
+function drawBarChart(doc, data) {
+  // Implementation for horizontal bar chart
+  const maxScore = 20;
+  const barHeight = 20;
+  const spacing = 10;
+  const startY = doc.y;
+
+  Object.entries(data).forEach(([label, score], idx) => {
+    const y = startY + (idx * (barHeight + spacing));
+    const percentage = (score / maxScore) * 100;
+    const barWidth = (percentage / 100) * 300;
+
+    // Label
+    doc.fontSize(9)
+       .fillColor('#374151')
+       .text(label, 50, y);
+
+    // Background bar
+    doc.rect(200, y, 300, barHeight)
+       .fillAndStroke('#E5E7EB', '#D1D5DB');
+
+    // Filled bar (score)
+    let barColor = '#EF4444'; // Red for low
+    if (percentage >= 75) barColor = '#10B981'; // Green for high
+    else if (percentage >= 50) barColor = '#F59E0B'; // Orange for medium
+
+    doc.rect(200, y, barWidth, barHeight)
+       .fill(barColor);
+
+    // Score text
+    doc.fillColor('#000000')
+       .text(`${score}/${maxScore}`, 510, y + 5);
+  });
+
+  doc.moveDown(3);
+}
