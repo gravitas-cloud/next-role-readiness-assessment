@@ -29,6 +29,9 @@ export interface IStorage {
   // PDF generation
   updatePdfUrl(id: string, pdfUrl: string): Promise<Assessment>;
   
+  // MailerLite sync
+  updateMailerLiteSync(id: string, subscriberId: string): Promise<Assessment>;
+  
   // Session store
   sessionStore: any;
 }
@@ -120,6 +123,19 @@ export class DatabaseStorage implements IStorage {
       .set({ 
         pdfUrl,
         reportGenerated: true 
+      })
+      .where(eq(assessments.id, id))
+      .returning();
+    return assessment;
+  }
+
+  async updateMailerLiteSync(id: string, subscriberId: string): Promise<Assessment> {
+    const [assessment] = await db
+      .update(assessments)
+      .set({
+        mailerLiteSynced: true,
+        mailerLiteSubId: subscriberId,
+        reportSentAt: new Date()
       })
       .where(eq(assessments.id, id))
       .returning();

@@ -9,7 +9,8 @@ import LandingPage from "@/pages/LandingPage";
 import AuthPage from "@/pages/AuthPage";
 import AssessmentPage from "@/pages/AssessmentPage";
 import ResultsPage from "@/pages/ResultsPage";
-import AdminPage from "@/pages/AdminPage";
+import AdminLoginPage from "@/pages/AdminLoginPage";
+import AdminDashboard from "@/pages/AdminDashboard";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -19,7 +20,8 @@ function Router() {
       <Route path="/auth" component={AuthPage} />
       <ProtectedRoute path="/assessment" component={AssessmentPage} />
       <ProtectedRoute path="/results" component={ResultsPage} />
-      <ProtectedRoute path="/admin" component={AdminPage} />
+      <Route path="/admin/login" component={AdminLoginPage} />
+      <Route path="/admin/dashboard" component={AdminDashboard} />
       <Route component={NotFound} />
     </Switch>
   );

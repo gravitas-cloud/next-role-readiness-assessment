@@ -190,8 +190,103 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Admin routes will be added here
-  // MailerLite routes will be added here
+  // Admin routes
+  const { setupAdminAuth, authenticateAdmin } = await import("./admin-auth");
+  const { syncSubscriber, handleWebhook } = await import("./mailerlite-service");
+  
+  setupAdminAuth(app);
+
+  // Get pending assessments (admin only)
+  app.get("/api/admin/assessments/pending", authenticateAdmin, async (req, res) => {
+    try {
+      const pendingAssessments = await storage.getPendingAssessments();
+      
+      // Include user info with each assessment
+      const assessmentsWithUsers = await Promise.all(
+        pendingAssessments.map(async (assessment) => {
+          const user = await storage.getUser(assessment.userId);
+          return {
+            ...assessment,
+            user: user ? { id: user.id, name: user.name, email: user.email } : null
+          };
+        })
+      );
+
+      res.json(assessmentsWithUsers);
+    } catch (error) {
+      console.error("Error fetching pending assessments:", error);
+      res.status(500).json({ message: "Failed to fetch pending assessments" });
+    }
+  });
+
+  // Approve assessment and send to MailerLite (admin only)
+  app.post("/api/admin/assessments/:id/approve", authenticateAdmin, async (req, res) => {
+    try {
+      const assessment = await storage.getAssessment(req.params.id);
+      
+      if (!assessment) {
+        return res.status(404).json({ message: "Assessment not found" });
+      }
+
+      if (!assessment.reportGenerated) {
+        return res.status(400).json({ message: "PDF report must be generated before approval" });
+      }
+
+      // Get user info
+      const user = await storage.getUser(assessment.userId);
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      // Mark as approved
+      await storage.approveAssessment(req.params.id);
+
+      // Sync to MailerLite (this triggers email automation)
+      try {
+        const result = await syncSubscriber(user, assessment);
+        res.json({ 
+          success: true, 
+          message: "Assessment approved and synced to MailerLite",
+          subscriberId: result.subscriberId 
+        });
+      } catch (mlError: any) {
+        // Assessment is approved but MailerLite sync failed
+        console.error("MailerLite sync failed:", mlError);
+        res.json({
+          success: true,
+          message: "Assessment approved but MailerLite sync failed",
+          error: mlError.message
+        });
+      }
+    } catch (error) {
+      console.error("Error approving assessment:", error);
+      res.status(500).json({ message: "Failed to approve assessment" });
+    }
+  });
+
+  // Get all assessments with stats (admin only)
+  app.get("/api/admin/assessments", authenticateAdmin, async (req, res) => {
+    try {
+      // This would need to be implemented in storage to get all assessments
+      // For now, just get pending ones
+      const assessments = await storage.getPendingAssessments();
+      res.json(assessments);
+    } catch (error) {
+      console.error("Error fetching assessments:", error);
+      res.status(500).json({ message: "Failed to fetch assessments" });
+    }
+  });
+
+  // MailerLite webhook endpoint
+  app.post("/api/webhooks/mailerlite", async (req, res) => {
+    try {
+      await handleWebhook(req.body);
+      res.sendStatus(200);
+    } catch (error) {
+      console.error("Webhook error:", error);
+      res.sendStatus(500);
+    }
+  });
 
   const httpServer = createServer(app);
 
