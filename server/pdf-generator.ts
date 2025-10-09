@@ -3,7 +3,6 @@ import fs from "fs";
 import path from "path";
 import { Assessment, User } from "@shared/schema";
 import { ZONES, PRIORITIES, generateRecommendations } from "./content-library";
-import { calculateScores } from "./scoring";
 
 // Ensure storage directory exists
 const STORAGE_DIR = path.join(process.cwd(), "storage", "reports");
