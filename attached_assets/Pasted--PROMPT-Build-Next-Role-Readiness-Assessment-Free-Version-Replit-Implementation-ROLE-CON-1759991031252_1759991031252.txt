@@ -1,0 +1,112 @@
+# PROMPT: Build Next Role Readiness Assessment - Free Version (Replit Implementation)
+
+## ROLE & CONTEXT
+You are an expert full-stack developer specializing in building production-ready web applications on Replit. You excel at creating secure, scalable assessment platforms with intuitive UIs and seamless third-party integrations.
+
+## PROJECT OVERVIEW
+
+### Business Context
+Build a lead generation assessment tool for Gravitas Academy, an executive coaching business serving Senior IT Leaders (ages 38-50) in India who are transitioning from technical roles to strategic/C-suite positions.
+
+**Purpose**: This free 12-question diagnostic helps senior IT leaders discover their "Strategic Readiness Zone" and top development priorities, creating awareness and driving them to paid coaching offers.
+
+**User Journey**:
+1. User discovers assessment via marketing (ads, LinkedIn, workshops)
+2. Creates account and completes 12-question assessment (12-15 minutes)
+3. Receives instant zone classification + top 2 priorities
+4. Gets detailed PDF report via email (automated)
+5. Receives nurture emails driving to workshop/community/paid assessment
+
+### Success Criteria
+- ✅ Smooth, professional user experience (mobile + desktop)
+- ✅ Secure authentication and data storage
+- ✅ Accurate scoring and zone classification
+- ✅ Automated report generation and email delivery via MailerLite
+- ✅ Admin approval workflow for reports
+- ✅ Production-ready code with error handling
+- ✅ Fast load times (<3 seconds)
+
+---
+
+## TECHNICAL REQUIREMENTS
+
+### Tech Stack (Replit-Optimized)
+**Frontend**:
+- React 18+ with Vite (fast dev experience)
+- Tailwind CSS for styling
+- React Hook Form for form management
+- Zustand for state management (lightweight)
+- React Router for navigation
+
+**Backend**:
+- Node.js with Express
+- PostgreSQL for database (Replit built-in)
+- Prisma ORM (better DX than raw SQL)
+- JWT for authentication
+- PDFKit or Puppeteer for PDF generation
+
+**Email Integration**:
+- MailerLite API v2 for email campaigns
+- Webhook handling for delivery status
+
+**Deployment**:
+- Replit (hosted)
+- Environment variables via Replit Secrets
+
+---
+
+## SYSTEM ARCHITECTURE
+
+### Database Schema (Prisma)
+
+```prisma
+model User {
+  id            String   @id @default(uuid())
+  email         String   @unique
+  name          String
+  createdAt     DateTime @default(now())
+  assessments   Assessment[]
+  @@map("users")
+}
+
+model Assessment {
+  id                String   @id @default(uuid())
+  userId            String
+  user              User     @relation(fields: [userId], references: [id])
+
+  // Responses (JSON for flexibility)
+  responses         Json     // {q1: 3, q2: 4, ...}
+
+  // Calculated scores
+  strategicIdentity    Int
+  visibilityPositioning Int
+  politicalCapital     Int
+  totalScore           Int
+  zone                 String  // "ZONE_1", "ZONE_2", "ZONE_3", "ZONE_4"
+
+  // Top priorities
+  priority1         String
+  priority2         String
+
+  // Report generation
+  reportGenerated   Boolean  @default(false)
+  reportApproved    Boolean  @default(false)
+  reportSentAt      DateTime?
+  pdfUrl            String?
+
+  // MailerLite sync
+  mailerLiteSynced  Boolean  @default(false)
+  mailerLiteSubId   String?
+
+  completedAt       DateTime @default(now())
+
+  @@map("assessments")
+}
+
+model Admin {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String   // bcrypt hashed
+  role      String   @default("admin")
+  @@map("admins")
+}
