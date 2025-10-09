@@ -128,8 +128,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       try {
         const user = await storage.getUser(assessment.userId);
         if (user) {
-          const pdfPath = await generatePDFReport(completedAssessment, user);
-          await storage.updatePdfUrl(req.params.id, pdfPath);
+          // Generate PDF file (saves to storage/reports/)
+          await generatePDFReport(completedAssessment, user);
+          // Store web URL (not file path) for frontend access
+          const pdfWebUrl = `/api/reports/${req.params.id}.pdf`;
+          await storage.updatePdfUrl(req.params.id, pdfWebUrl);
         }
       } catch (pdfError) {
         console.error("Error generating PDF:", pdfError);
