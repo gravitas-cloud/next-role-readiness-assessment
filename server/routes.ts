@@ -124,7 +124,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
         priority2: scores.priority2,
       });
 
-      res.json(completedAssessment);
+      // Generate PDF report
+      try {
+        const user = await storage.getUser(assessment.userId);
+        if (user) {
+          const pdfPath = await generatePDFReport(completedAssessment, user);
+          await storage.updatePdfUrl(req.params.id, pdfPath);
+        }
+      } catch (pdfError) {
+        console.error("Error generating PDF:", pdfError);
+        // Don't fail the whole request if PDF generation fails
+      }
+
+      // Fetch the updated assessment with PDF URL
+      const finalAssessment = await storage.getAssessment(req.params.id);
+      res.json(finalAssessment);
     } catch (error) {
       console.error("Error submitting assessment:", error);
       if (error instanceof z.ZodError) {
