@@ -1,0 +1,97 @@
+// mailerlite-service.js
+const axios = require('axios');
+
+const MAILERLITE_API = 'https://api.mailerlite.com/api/v2';
+const API_KEY = process.env.MAILERLITE_API_KEY;
+
+async function syncSubscriber(user, assessment) {
+  try {
+    // 1. Add/update subscriber
+    const subscriberData = {
+      email: user.email,
+      name: user.name,
+      fields: {
+        zone: assessment.zone,
+        total_score: assessment.totalScore,
+        priority_1: assessment.priority1,
+        priority_2: assessment.priority2,
+        assessment_date: assessment.completedAt.toISOString(),
+        report_url: `${process.env.APP_URL}/api/reports/${assessment.id}.pdf`
+      }
+    };
+
+    const response = await axios.post(
+      `${MAILERLITE_API}/subscribers`,
+      subscriberData,
+      {
+        headers: {
+          'X-MailerLite-ApiKey': API_KEY,
+          'Content-Type': 'application/json'
+        }
+      }
+    );
+
+    const subscriberId = response.data.id;
+
+    // 2. Add to zone-specific group
+    const groupMap = {
+      'ZONE_1': process.env.MAILERLITE_GROUP_ZONE_1,
+      'ZONE_2': process.env.MAILERLITE_GROUP_ZONE_2,
+      'ZONE_3': process.env.MAILERLITE_GROUP_ZONE_3,
+      'ZONE_4': process.env.MAILERLITE_GROUP_ZONE_4
+    };
+
+    await axios.post(
+      `${MAILERLITE_API}/groups/${groupMap[assessment.zone]}/subscribers/${subscriberId}`,
+      {},
+      {
+        headers: { 'X-MailerLite-ApiKey': API_KEY }
+      }
+    );
+
+    // 3. Update assessment record
+    await prisma.assessment.update({
+      where: { id: assessment.id },
+      data: {
+        mailerLiteSynced: true,
+        mailerLiteSubId: subscriberId.toString(),
+        reportSentAt: new Date()
+      }
+    });
+
+    return { success: true, subscriberId };
+
+  } catch (error) {
+    console.error('MailerLite sync error:', error.response?.data || error);
+    throw error;
+  }
+}
+
+// Webhook handler for delivery status
+async function handleWebhook(req, res) {
+  const { type, data } = req.body;
+
+  // Verify webhook signature (optional but recommended)
+  // Implementation depends on MailerLite webhook security
+
+  switch (type) {
+    case 'subscriber.created':
+      console.log('Subscriber created:', data.email);
+      break;
+
+    case 'campaign.sent':
+      // Track when report email was delivered
+      console.log('Campaign sent:', data.campaign_id);
+      break;
+
+    case 'subscriber.bounced':
+      // Handle bounced emails
+      console.log('Email bounced:', data.email);
+      // Maybe flag in database to retry with different email
+      break;
+  }
+
+  res.sendStatus(200);
+}
+
+module.exports = { syncSubscriber, handleWebhook };
