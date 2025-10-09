@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import ProgressBar from "@/components/ProgressBar";
 import AssessmentQuestion from "@/components/AssessmentQuestion";
@@ -6,37 +7,124 @@ import ThemeToggle from "@/components/ThemeToggle";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useLocation } from "wouter";
 import logoUrl from "@assets/Gravitas Academy logo_1759991845447.png";
+import { Skeleton } from "@/components/ui/skeleton";
+import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 
-const questions = [
-  {
-    id: 1,
-    text: "How often do you participate in strategic planning sessions beyond your technical domain?",
-    options: [
-      { value: '1', label: 'Rarely or never - I focus primarily on technical execution' },
-      { value: '2', label: 'Occasionally when invited to provide technical input' },
-      { value: '3', label: 'Regularly - I contribute to strategic discussions' },
-      { value: '4', label: 'Frequently - I lead strategic initiatives across functions' },
-    ],
-  },
-  {
-    id: 2,
-    text: "How visible are you to senior leadership outside your immediate team?",
-    options: [
-      { value: '1', label: 'Not very visible - I mainly interact with my direct team' },
-      { value: '2', label: 'Somewhat visible - Occasional exposure to senior leaders' },
-      { value: '3', label: 'Moderately visible - Regular touchpoints with executives' },
-      { value: '4', label: 'Highly visible - Recognized strategic contributor across organization' },
-    ],
-  },
-];
+interface QuestionOption {
+  value: number;
+  label: string;
+}
+
+interface Question {
+  id: string;
+  section: string;
+  order: number;
+  text: string;
+  options: QuestionOption[];
+}
+
+interface AssessmentContent {
+  opening: {
+    title: string;
+    introduction: string;
+    time_estimate: string;
+    value_proposition: string;
+  };
+  questions: Question[];
+  sections: Array<{
+    section_id: string;
+    section_title: string;
+    section_description: string;
+  }>;
+}
 
 export default function AssessmentPage() {
   const [, setLocation] = useLocation();
   const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [answers, setAnswers] = useState<Record<number, string>>({});
+  const [answers, setAnswers] = useState<Record<string, number>>({});
+  const [assessmentId, setAssessmentId] = useState<string | null>(null);
+  const { toast } = useToast();
+
+  const { data: assessmentContent, isLoading: questionsLoading } = useQuery<AssessmentContent>({
+    queryKey: ['/api/assessment/questions'],
+  });
+
+  // Create assessment on mount
+  const createAssessmentMutation = useMutation({
+    mutationFn: async () => {
+      const res = await apiRequest("POST", "/api/assessments");
+      return res.json();
+    },
+    onSuccess: (data) => {
+      setAssessmentId(data.id);
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to start assessment. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Submit assessment
+  const submitAssessmentMutation = useMutation({
+    mutationFn: async (responses: Record<string, number>) => {
+      const res = await apiRequest("POST", `/api/assessments/${assessmentId}/submit`, responses);
+      return res.json();
+    },
+    onSuccess: (data) => {
+      setLocation(`/results?id=${data.id}`);
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to submit assessment. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
+  useEffect(() => {
+    if (!assessmentId) {
+      createAssessmentMutation.mutate();
+    }
+  }, []);
+
+  if (questionsLoading || !assessmentContent || !assessmentId) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <header className="border-b bg-background">
+          <div className="max-w-7xl mx-auto flex h-16 items-center justify-between px-6">
+            <div className="flex items-center gap-3">
+              <img src={logoUrl} alt="Gravitas Academy" className="h-10 w-auto" />
+            </div>
+            <ThemeToggle />
+          </div>
+        </header>
+
+        <div className="flex-1 py-12 px-6">
+          <div className="max-w-2xl mx-auto space-y-6">
+            <Skeleton className="h-8 w-3/4" />
+            <Skeleton className="h-24 w-full" />
+            <div className="space-y-3">
+              <Skeleton className="h-12 w-full" />
+              <Skeleton className="h-12 w-full" />
+              <Skeleton className="h-12 w-full" />
+              <Skeleton className="h-12 w-full" />
+              <Skeleton className="h-12 w-full" />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const questions = assessmentContent.questions;
 
   const handleAnswerChange = (value: string) => {
-    setAnswers({ ...answers, [questions[currentQuestion].id]: value });
+    setAnswers({ ...answers, [questions[currentQuestion].id]: parseInt(value) });
   };
 
   const canGoNext = answers[questions[currentQuestion].id] !== undefined;
@@ -46,8 +134,8 @@ export default function AssessmentPage() {
     if (currentQuestion < questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
     } else {
-      console.log('Assessment complete', answers);
-      setLocation('/results');
+      // Submit the assessment
+      submitAssessmentMutation.mutate(answers);
     }
   };
 
@@ -56,6 +144,12 @@ export default function AssessmentPage() {
       setCurrentQuestion(currentQuestion - 1);
     }
   };
+
+  const currentQ = questions[currentQuestion];
+  const formattedOptions = currentQ.options.map(opt => ({
+    value: opt.value.toString(),
+    label: opt.label
+  }));
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -72,9 +166,9 @@ export default function AssessmentPage() {
 
       <div className="flex-1 py-12 px-6">
         <AssessmentQuestion
-          question={questions[currentQuestion].text}
-          options={questions[currentQuestion].options}
-          selectedValue={answers[questions[currentQuestion].id] || ''}
+          question={currentQ.text}
+          options={formattedOptions}
+          selectedValue={answers[currentQ.id]?.toString() || ''}
           onValueChange={handleAnswerChange}
           questionNumber={currentQuestion + 1}
           totalQuestions={questions.length}
@@ -86,7 +180,7 @@ export default function AssessmentPage() {
           <Button
             variant="outline"
             onClick={handleBack}
-            disabled={!canGoBack}
+            disabled={!canGoBack || submitAssessmentMutation.isPending}
             data-testid="button-back"
           >
             <ChevronLeft className="h-4 w-4 mr-2" />
@@ -94,11 +188,19 @@ export default function AssessmentPage() {
           </Button>
           <Button
             onClick={handleNext}
-            disabled={!canGoNext}
+            disabled={!canGoNext || submitAssessmentMutation.isPending}
             data-testid="button-next"
           >
-            {currentQuestion < questions.length - 1 ? 'Next' : 'Submit'}
-            <ChevronRight className="h-4 w-4 ml-2" />
+            {submitAssessmentMutation.isPending ? (
+              "Submitting..."
+            ) : currentQuestion < questions.length - 1 ? (
+              <>
+                Next
+                <ChevronRight className="h-4 w-4 ml-2" />
+              </>
+            ) : (
+              "Submit"
+            )}
           </Button>
         </div>
       </div>
