@@ -22,6 +22,11 @@ export async function generatePDFReport(assessment: Assessment, user: User): Pro
     const stream = fs.createWriteStream(filePath);
     doc.pipe(stream);
 
+    // Page dimensions
+    const pageWidth = doc.page.width;
+    const margin = 50;
+    const textWidth = pageWidth - (margin * 2);
+
     // Get zone and priority data
     const zoneData = ZONES[assessment.zone || "ZONE_1"];
     const priority1Data = PRIORITIES[assessment.priority1 || "Strategic Business Thinking"];
@@ -37,12 +42,18 @@ export async function generatePDFReport(assessment: Assessment, user: User): Pro
     // Header - Gravitas Academy
     doc.fontSize(24)
        .fillColor("#1E40AF")
-       .text("Next Role Readiness Diagnostic", { align: "center" });
+       .text("Next Role Readiness Diagnostic", margin, doc.y, { 
+         width: textWidth,
+         align: "center" 
+       });
 
     doc.moveDown(0.5);
     doc.fontSize(12)
        .fillColor("#6B7280")
-       .text(`Results for ${user.name}`, { align: "center" });
+       .text(`Results for ${user.name}`, margin, doc.y, { 
+         width: textWidth,
+         align: "center" 
+       });
     
     doc.fontSize(10)
        .fillColor("#9CA3AF")
@@ -50,17 +61,26 @@ export async function generatePDFReport(assessment: Assessment, user: User): Pro
          year: "numeric", 
          month: "long", 
          day: "numeric" 
-       }), { align: "center" });
+       }), margin, doc.y, { 
+         width: textWidth,
+         align: "center" 
+       });
 
     // Zone Section
     doc.moveDown(2);
     doc.fontSize(22)
        .fillColor("#000000")
-       .text(zoneData.title, { align: "left" });
+       .text(zoneData.title, margin, doc.y, { 
+         width: textWidth,
+         align: "left" 
+       });
 
     doc.fontSize(11)
        .fillColor("#6B7280")
-       .text(`Your Score: ${assessment.totalScore}/60 points (${zoneData.scoreRange})`, { align: "left" });
+       .text(`Your Score: ${assessment.totalScore}/60 points (${zoneData.scoreRange})`, margin, doc.y, { 
+         width: textWidth,
+         align: "left" 
+       });
 
     // Visual bar chart for dimensions
     doc.moveDown(1.5);
@@ -74,69 +94,103 @@ export async function generatePDFReport(assessment: Assessment, user: User): Pro
     doc.moveDown(2);
     doc.fontSize(14)
        .fillColor("#000000")
-       .text("What This Means:", { underline: true });
+       .text("What This Means:", margin, doc.y, { 
+         width: textWidth,
+         underline: true 
+       });
 
     doc.moveDown(0.5);
     doc.fontSize(10)
        .fillColor("#374151")
-       .text(zoneData.currentReality, { align: "justify" });
+       .text(zoneData.currentReality, margin, doc.y, { 
+         width: textWidth,
+         align: "justify" 
+       });
 
     doc.moveDown(1);
     doc.fontSize(10)
        .fillColor("#374151")
-       .text(zoneData.meaning, { align: "justify" });
+       .text(zoneData.meaning, margin, doc.y, { 
+         width: textWidth,
+         align: "justify" 
+       });
 
     // Key Insight
     doc.moveDown(1.5);
     doc.fontSize(14)
        .fillColor("#1E40AF")
-       .text("Your #1 Breakthrough Priority:", { align: "left" });
+       .text("Your #1 Breakthrough Priority:", margin, doc.y, { 
+         width: textWidth,
+         align: "left" 
+       });
     
     doc.moveDown(0.5);
     doc.fontSize(12)
        .fillColor("#000000")
-       .text(assessment.priority1 || "Strategic Business Thinking", { align: "left" });
+       .text(assessment.priority1 || "Strategic Business Thinking", margin, doc.y, { 
+         width: textWidth,
+         align: "left" 
+       });
 
     // PAGE 2: Next Steps
     doc.addPage();
     
     doc.fontSize(20)
        .fillColor("#1E40AF")
-       .text("Your Development Roadmap", { align: "left" });
+       .text("Your Development Roadmap", margin, doc.y, { 
+         width: textWidth,
+         align: "left" 
+       });
 
     // Priority 1
     doc.moveDown(1.5);
     doc.fontSize(14)
        .fillColor("#000000")
-       .text(`Priority #1: ${assessment.priority1}`);
+       .text(`Priority #1: ${assessment.priority1}`, margin, doc.y, { 
+         width: textWidth 
+       });
 
     doc.moveDown(0.5);
     doc.fontSize(10)
        .fillColor("#374151")
-       .text(priority1Data.description, { align: "justify" });
+       .text(priority1Data.description, margin, doc.y, { 
+         width: textWidth,
+         align: "justify" 
+       });
 
     // Priority 2
     doc.moveDown(1.5);
     doc.fontSize(14)
        .fillColor("#000000")
-       .text(`Priority #2: ${assessment.priority2}`);
+       .text(`Priority #2: ${assessment.priority2}`, margin, doc.y, { 
+         width: textWidth 
+       });
 
     doc.moveDown(0.5);
     doc.fontSize(10)
        .fillColor("#374151")
-       .text(priority2Data.description, { align: "justify" });
+       .text(priority2Data.description, margin, doc.y, { 
+         width: textWidth,
+         align: "justify" 
+       });
 
     // Immediate Actions
     doc.moveDown(1.5);
     doc.fontSize(12)
        .fillColor("#000000")
-       .text("This Week - Immediate Actions:", { underline: true });
+       .text("This Week - Immediate Actions:", margin, doc.y, { 
+         width: textWidth,
+         underline: true 
+       });
 
     doc.moveDown(0.5);
     recommendations.immediate.forEach((action, idx) => {
       doc.fontSize(10)
          .fillColor("#374151")
-         .text(`${idx + 1}. ${action}`, { align: "left" });
+         .text(`${idx + 1}. ${action}`, margin, doc.y, { 
+           width: textWidth,
+           align: "left" 
+         });
       doc.moveDown(0.3);
     });
 
@@ -144,35 +198,50 @@ export async function generatePDFReport(assessment: Assessment, user: User): Pro
     doc.moveDown(1);
     doc.fontSize(12)
        .fillColor("#000000")
-       .text("Next 30 Days - Development Plan:", { underline: true });
+       .text("Next 30 Days - Development Plan:", margin, doc.y, { 
+         width: textWidth,
+         underline: true 
+       });
 
     doc.moveDown(0.5);
     recommendations.thirtyDay.slice(0, 3).forEach((action, idx) => {
       doc.fontSize(10)
          .fillColor("#374151")
-         .text(`${idx + 1}. ${action}`, { align: "left" });
+         .text(`${idx + 1}. ${action}`, margin, doc.y, { 
+           width: textWidth,
+           align: "left" 
+         });
       doc.moveDown(0.3);
     });
 
     // CTA Box
     const ctaY = doc.page.height - 180;
-    doc.rect(50, ctaY, doc.page.width - 100, 110)
+    doc.rect(margin, ctaY, textWidth, 110)
        .fillAndStroke("#F3F4F6", "#D1D5DB");
 
     doc.fillColor("#000000")
        .fontSize(16)
-       .text("Ready to Accelerate Your Journey?", 60, ctaY + 15);
+       .text("Ready to Accelerate Your Journey?", margin + 10, ctaY + 15, { 
+         width: textWidth - 20 
+       });
 
     doc.moveDown(0.8);
+    const ctaTextX = margin + 10;
     doc.fontSize(11)
        .fillColor("#1E40AF")
-       .text("→ Take Complete Assessment (₹8,500)", 60, doc.y);
+       .text("→ Take Complete Assessment (₹8,500)", ctaTextX, doc.y, { 
+         width: textWidth - 20 
+       });
     doc.fontSize(11)
        .fillColor("#1E40AF")
-       .text("→ Join Free Workshop", 60, doc.y + 5);
+       .text("→ Join Free Workshop", ctaTextX, doc.y + 5, { 
+         width: textWidth - 20 
+       });
     doc.fontSize(11)
        .fillColor("#1E40AF")
-       .text("→ Book 15-min Consultation", 60, doc.y + 5);
+       .text("→ Book 15-min Consultation", ctaTextX, doc.y + 5, { 
+         width: textWidth - 20 
+       });
 
     doc.end();
 
