@@ -19,6 +19,51 @@ A lead generation assessment tool for Gravitas Academy that helps Senior IT Lead
 - ✅ **PDF Generation**: Built PDFKit-based report generator creating professional 2-page PDF reports with zone interpretations, dimension visualizations, and development roadmaps
 - ✅ **Assessment API**: Implemented complete assessment workflow endpoints (create, submit, score calculation, PDF generation, download) with authentication and ownership validation
 - ✅ End-to-end testing confirmed: assessment submission → scoring (38/60 = ZONE_2) → PDF generation → download working correctly
+- ✅ **MailerLite Integration**: Built subscriber sync service with zone tagging and custom field mapping for automated email campaigns
+- ✅ **Admin Authentication**: Implemented separate admin login system with bcrypt-hashed credentials and isolated JWT sessions
+- ✅ **Admin Dashboard**: Created approval workflow UI showing pending assessments with zone badges, scores, and PDF preview
+- ✅ **Approval Workflow**: Built approval endpoint that updates assessment status and triggers MailerLite subscriber sync
+- ✅ **Admin Seeding**: Created seed script for initial admin user (admin@gravitasacademy.com)
+- ✅ Complete end-to-end test passed: user registration → assessment → admin approval → email integration
+
+## Setup Instructions
+
+### Admin Access
+1. Default admin credentials:
+   - Email: `admin@gravitasacademy.com`
+   - Password: `AdminPass123!`
+   - **⚠️ Change password in production!**
+
+2. To create additional admin users:
+   ```bash
+   ADMIN_EMAIL=your@email.com ADMIN_PASSWORD=yourpass tsx server/seed-admin.ts
+   ```
+
+3. Admin dashboard: `/admin/dashboard`
+
+### MailerLite Integration
+1. Get your MailerLite API key from https://dashboard.mailerlite.com/integrations/api
+2. Add to Replit Secrets:
+   - Key: `MAILERLITE_API_KEY`
+   - Value: Your MailerLite Classic API key (v2)
+3. Create MailerLite groups and add group IDs to `server/mailerlite-service.ts`:
+   - ZONE_1 group (high priority)
+   - ZONE_2 group
+   - ZONE_3 group
+   - ZONE_4 group (ready for C-suite)
+
+4. The system automatically:
+   - Creates/updates subscribers on admin approval
+   - Tags subscribers with their zone
+   - Sets custom fields (zone, totalScore, priority1, priority2)
+   - Adds to appropriate group for nurture campaigns
+
+### Running the Platform
+```bash
+npm run dev              # Start development server
+npm run db:push          # Sync database schema
+tsx server/seed-admin.ts # Create admin user
+```
 
 ## User Preferences
 
@@ -84,9 +129,16 @@ Preferred communication style: Simple, everyday language.
 - Algorithm identifies top 2 development priorities based on dimension scores
 
 **Report Generation**
-- PDF generation using PDFKit or Puppeteer
+- PDF generation using PDFKit with professional 2-page layout
 - Admin approval workflow before report distribution
-- Automated email delivery integration with MailerLite
+- Automated email delivery integration with MailerLite (tags by zone, custom fields for scores/priorities)
+
+**Admin System**
+- Separate authentication system for admin users (/api/admin/* endpoints)
+- Admin dashboard at /admin/dashboard with pending assessments view
+- Approval workflow triggers MailerLite sync and marks reports as approved
+- Bcrypt-hashed admin credentials stored in admins table
+- Default admin: admin@gravitasacademy.com (password should be rotated in production)
 
 ### Data Storage
 
@@ -111,8 +163,10 @@ Preferred communication style: Simple, everyday language.
 
 **Email Marketing**
 - MailerLite API v2 for email campaigns
-- Webhook handling for delivery status tracking
-- Automated nurture sequences for lead conversion
+- Subscriber sync triggered on admin approval with zone-based tagging
+- Custom fields: zone, totalScore, priority1, priority2
+- Group-based segmentation for targeted nurture campaigns
+- Graceful degradation if API key not configured (approval still works, sync fails silently)
 
 **Database Service**
 - Neon serverless PostgreSQL with connection pooling
