@@ -18,7 +18,7 @@ export default function AuthPage() {
               className="flex items-center gap-3 hover:opacity-80 transition-opacity"
               data-testid="button-back-home"
             >
-              <img src={logoUrl} alt="Gravitas Academy" className="h-13 w-auto" />
+              <img src={logoUrl} alt="Gravitas Academy" className="h-10 w-auto" />
             </button>
             <ThemeToggle />
           </div>

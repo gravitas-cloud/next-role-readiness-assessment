@@ -14,7 +14,7 @@ export default function LandingPage() {
       <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="max-w-7xl mx-auto flex h-16 items-center justify-between px-6">
           <div className="flex items-center gap-3">
-            <img src={logoUrl} alt="Gravitas Academy" className="h-13 w-auto" />
+            <img src={logoUrl} alt="Gravitas Academy" className="h-10 w-auto" />
           </div>
           <div className="flex items-center gap-4">
             <Button 
