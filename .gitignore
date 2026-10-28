@@ -4,3 +4,6 @@ dist
 server/public
 vite.config.ts.*
 *.tar.gz
+
+# Never commit Replit agent state or generated local state
+.local/state/replit/agent/
